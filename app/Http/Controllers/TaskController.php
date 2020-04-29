@@ -45,7 +45,7 @@ public function show($id)
     public function destroy($id){
 
         // $task =DB::table('tasks')->where ('id','=',$id)->delete();
-       $task=Task::findorfail($id);
+       $task=Task::findOrFail($id);
        $task->delete();
         return redirect()->back();
 
@@ -55,7 +55,7 @@ public function show($id)
 
         // $tasks =DB::table('tasks')->get(); 
         // $task=Task::all();
-        $tt = Task::findorfail($id);
+        $tt = Task::findOrFail($id);
         $tasks = Task::orderBy('created_at')->get();
         return view('Task.index',compact('tasks','tt'));
 
@@ -64,7 +64,7 @@ public function show($id)
 
 
     }
-    public function update(TaskRequest $request,$id){
+    public function update(Request $request,$id){
         
       
     //    $affected = DB::table('tasks')-> where('id', $id)->update(['name'=>$request->name,
@@ -72,11 +72,13 @@ public function show($id)
     //    'updated_at' => now(),]);
     //    return redirect('/');
 
-
-
-        Task::where('id',$id)->update(['name'=> $request->name]);
-        return redirect(route('home'));
-            
-        }
-
+    $request->validate([
+        'name'=>'required',
+        
+        ]);
+   $tasks=Task::findOrFail($id);
+   $tasks->name=$request->name;
+   $tasks->save();
+   return redirect(route('home'));
+    }
 }
